@@ -1,0 +1,47 @@
+﻿@page "/counter"
+@using RadzenTest.Shared;
+@using System.Collections;
+@inject DialogService DialogService
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+
+
+<RadzenButton Text="Hi"></RadzenButton>
+
+<p></p>
+
+<RadzenScheduler SlotRender=@OnSlotRender TItem="Shift" Data=@shifts
+                 TextProperty="Text" SelectedIndex="1"
+                StartProperty="Start" EndProperty="End">
+    <RadzenWeekView />
+    <RadzenMonthView />
+</RadzenScheduler>
+
+
+@code {
+
+    RadzenScheduler<Shift> scheduler;
+
+    public IList<Shift> shifts = new List<Shift>()
+    {
+        new Shift{Start  = DateTime.Now, End = DateTime.Now.AddHours(2),Text  ="YOOO KURWA" }
+    };
+
+    void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+        // Highlight today in month view
+        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        {
+            args.Attributes["style"] = "background: rgba(255,220,40,.2);";
+        }
+
+        // Highlight working hours (9-18)
+        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 8 && args.Start.Hour < 19)
+        {
+            args.Attributes["style"] = "background: rgba(255,220,40,.2);";
+        }
+    }
+}
